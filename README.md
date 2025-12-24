@@ -44,6 +44,15 @@ nano index.js
 node -c index.js
 ```
 
+#### Changing Directories in the Console
+```bash
+# You're in /opt/discord-bot
+cd ..           # Now in /opt
+cd ..           # Now in /
+cd ~            # Back to /root (your home)
+cd /opt/discord-bot  # Back to your bot
+```
+
 ---
 
 ### Managing Your Bot with PM2
