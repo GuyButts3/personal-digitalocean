@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { Client, GatewayIntentBits, Events } = require('discord.js');
 const axios = require('axios');
+const express = require('express');
 
 // Create a new client with necessary intents
 const client = new Client({
@@ -403,6 +404,32 @@ client.on(Events.GuildDelete, async (guild) => {
         guildId: guild.id,
         guildName: guild.name
     });
+});
+
+// Health check endpoint
+const healthApp = express();
+const HEALTH_PORT = process.env.HEALTH_PORT || 3100;
+
+healthApp.get('/health', (req, res) => {
+    if (client.isReady()) {
+        res.status(200).json({
+            bot: process.env.BOT_NAME || 'Discord Event Tracker',
+            status: 'healthy',
+            uptime: process.uptime(),
+            guilds: client.guilds.cache.size,
+            timestamp: new Date().toISOString()
+        });
+    } else {
+        res.status(503).json({ 
+            bot: process.env.BOT_NAME || 'Discord Event Tracker',
+            status: 'unhealthy',
+            timestamp: new Date().toISOString()
+        });
+    }
+});
+
+healthApp.listen(HEALTH_PORT, () => {
+    console.log(`🏥 Health check server running on port ${HEALTH_PORT}`);
 });
 
 // Login to Discord
